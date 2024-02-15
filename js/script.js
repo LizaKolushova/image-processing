@@ -39,14 +39,19 @@ document.getElementById('load-image').addEventListener('click', function() {
   }
 });
 
+document.getElementById('reset-image').addEventListener('click', function() {
+  img.src = '';
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  document.getElementById('file-input').value = '';
+  document.getElementById('url-input').value = '';
+  document.getElementById('image-info').innerText = '';
+});
+
 canvas.addEventListener('mousemove', function(e) {
   const rect = canvas.getBoundingClientRect();
   const x = e.clientX - rect.left;
   const y = e.clientY - rect.top;
   
-  const imageData = ctx.getImageData(x, y, 1, 1).data;
-  
-
   document.getElementById('coordinates-info').innerText = `Coordinates: (${x}, ${y})`;
 });
 
