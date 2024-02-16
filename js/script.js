@@ -13,29 +13,38 @@ document.getElementById('load-image').addEventListener('click', function() {
   
   if (fileInput.files.length > 0) {
     const file = fileInput.files[0];
+    
     const reader = new FileReader();
     
     reader.onload = function(e) {
-      img.onload = function() {
-        canvas.width = img.width;
-        canvas.height = img.height;
-        ctx.drawImage(img, 0, 0);
-        
-        document.getElementById('image-info').innerText = `Image Size: ${img.width} x ${img.height} pixels`;
-      }
-      img.src = e.target.result;
+      fetch(e.target.result)
+        .then(res => res.blob())
+        .then(blob => {
+          img.onload = function() {
+            canvas.width = img.width;
+            canvas.height = img.height;
+            ctx.drawImage(img, 0, 0);
+            
+            document.getElementById('image-info').innerText = `Image Size: ${img.width} x ${img.height} pixels`;
+          }
+          img.src = URL.createObjectURL(blob);
+        });
     }
     
     reader.readAsDataURL(file);
   } else {
-    img.onload = function() {
-      canvas.width = img.width;
-      canvas.height = img.height;
-      ctx.drawImage(img, 0, 0);
-      
-      document.getElementById('image-info').innerText = `Image Size: ${img.width} x ${img.height} pixels`;
-    }
-    img.src = urlInput.value;
+    fetch(urlInput.value)
+      .then(res => res.blob())
+      .then(blob => {
+        img.onload = function() {
+          canvas.width = img.width;
+          canvas.height = img.height;
+          ctx.drawImage(img, 0, 0);
+          
+          document.getElementById('image-info').innerText = `Image Size: ${img.width} x ${img.height} pixels`;
+        }
+        img.src = URL.createObjectURL(blob);
+      });
   }
 });
 

@@ -49,9 +49,6 @@ input{
   #load-image + #reset-image {
     margin-top: 20px;
   }
-  #image-info{
-    margin-top: 20px;
-  }
   .color-circle {
     width: 20px;
     height: 20px;
