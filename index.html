@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 
 <head>
     <meta charset="UTF-8">
@@ -10,26 +10,49 @@
 </head>
 
 <body>
-    <div id="image-container">
-        <aside>
-            <div id="input-container">
-                <input type="file" id="file-input">
-                <input type="text" id="url-input" placeholder="Enter image URL">
-                <button id="load-image">Load Image</button>
-                <button id="reset-image">Reset Image</button>
 
-            </div>
-        </aside>
-        <div id="canvas-container">
+    <aside>
+        <div id="input-container">
+            <button class="trigger">
+                <img src="img/formkit_download.svg" alt="Загрузка" width="20" height="20">
+            </button>
+            <!-- <button id="color-picker">
+                <img src="img/pepicons-pencil_color-picker.svg" alt="Пипетка" width="20" height="20">
+            </button> -->
+    </aside>
+    <div id="canvas-container">
+        <section id="canvas-scroll-container">
             <canvas id="canvas" width="500" height="500"></canvas>
-        </div>
-
+        </section>
     </div>
+
     <div id="info-panel">
         <div id="image-info"></div>
         <div id="coordinates-info"></div>
         <div id="color-info"></div>
         <div id="color-circle-container"></div>
+    </div>
+    <div class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="close-button">&times;</span>
+                <h3>Загрузка изображения</h3>
+            </div>
+            <form class="needs-validation" novalidate>
+                <div class="form-div">
+                    <label class="form-label">Загрузите файл</label>
+                    <input type="file" id="file-input">
+                </div>
+                <div class="form-div">
+                    <label class="form-label">Вставьте ссылку на картинку</label>
+                    <input type="text" id="url-input" placeholder="Enter image URL">
+                </div>
+                <div class="form-div">
+                    <button id="load-image" type="submit">Загрузить</button>
+                    <button id="reset-image">Сбросить</button>
+                </div>
+            </form>
+        </div>
     </div>
     <script src="js/script.js"></script>
 </body>
