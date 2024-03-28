@@ -1,13 +1,20 @@
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 let img = new Image();
-const modal = document.querySelector(".modal");
+const modalDownload = document.querySelector(".modalDownload");
+const modalBackdrop = document.querySelector(".modalBackdrop");
 const trigger = document.querySelector(".trigger");
-const closeButton = document.querySelector(".close-button");
+const ResiseFileModal = document.querySelector(".openResiseFileModal");
+const closeBackdrop = document.querySelector(".close-Backdrop");
+const closeDownload = document.querySelector(".close-Download");
 let colorPickerActive = false;
+const scaleDropdown = document.getElementById('scale-dropdown');
 
 function toggleModal() {
-    modal.classList.toggle("show-modal");
+  modalDownload.classList.toggle("show-modal");
+}
+function toggleModalBackdrop() {
+  modalBackdrop.classList.toggle("show-modal");
 }
 
 function windowOnClick(event) {
@@ -16,9 +23,62 @@ function windowOnClick(event) {
     }
 }
 
+function windowOnClickBackdrop(event) {
+  if (event.target === modal) {
+    toggleModalBackdrop();
+  }
+}
+
 trigger.addEventListener("click", toggleModal);
-closeButton.addEventListener("click", toggleModal);
+ResiseFileModal.addEventListener("click", toggleModalBackdrop);
+closeDownload.addEventListener("click", toggleModal);
+closeBackdrop.addEventListener("click", toggleModalBackdrop);
 window.addEventListener("click", windowOnClick);
+window.addEventListener("click", windowOnClickBackdrop);
+
+
+function calculateScale(width, height) {
+  let maxWidth = window.innerWidth - 100;
+  let maxHeight = window.innerHeight - 100;
+  let scale = Math.min(maxWidth / width, maxHeight / height);
+  return scale;
+}
+
+// Получаем ссылки на элементы модального окна
+const percentageMethod = document.getElementById('percentageMethod');
+const pixelsMethod = document.getElementById('pixelsMethod');
+
+// Получаем ссылку на выпадающий список выбора способа изменения размера
+const resizeMethodDropdown = document.getElementById('resizeMethod');
+
+// Добавляем обработчик события для изменений в выпадающем списке
+resizeMethodDropdown.addEventListener('change', function() {
+    // Получаем значение выбранного элемента
+    const selectedMethod = this.value;
+
+    // Скрываем все элементы
+    percentageMethod.style.display = 'none';
+    pixelsMethod.style.display = 'none';
+
+    // Показываем только выбранный элемент
+    if (selectedMethod === 'percentage') {
+        percentageMethod.style.display = 'block';
+    } else {
+        pixelsMethod.style.display = 'block';
+    }
+});
+// Получаем ссылки на элементы tooltip
+const tooltip = document.getElementById('tooltip');
+const tooltipText = document.getElementById('tooltipText');
+
+// Добавляем обработчики событий для показа и скрытия текста подсказки
+tooltip.addEventListener('mouseover', function() {
+    tooltipText.style.visibility = 'visible';
+});
+
+tooltip.addEventListener('mouseout', function() {
+    tooltipText.style.visibility = 'hidden';
+});
 
 document.getElementById('load-image').addEventListener('click', function(e) {
   e.preventDefault();
@@ -40,10 +100,19 @@ document.getElementById('load-image').addEventListener('click', function(e) {
         .then(res => res.blob())
         .then(blob => {
           img.onload = function() {
-            canvas.width = img.width;
-            canvas.height = img.height;
-            ctx.drawImage(img, 0, 0);
-            
+            let scale = calculateScale(img.width, img.height);
+            canvas.width = window.innerWidth - 100;
+            canvas.height = window.innerHeight - 100;
+            let imageWidth = img.width * scale;
+            let imageHeight = img.height * scale;
+            let x = (canvas.width - imageWidth) / 2;
+            let y = (canvas.height - imageHeight) / 2;
+            ctx.drawImage(img, x, y, imageWidth, imageHeight);
+            // canvas.width = img.width;
+            // canvas.height = img.height;
+            // ctx.drawImage(img, 0, 0);
+            document.getElementById('width').value = img.width;
+            document.getElementById('height').value = img.height;
             document.getElementById('image-info').innerText = `Image Size: ${img.width} x ${img.height}`;
           }
           img.src = URL.createObjectURL(blob);
@@ -56,10 +125,19 @@ document.getElementById('load-image').addEventListener('click', function(e) {
       .then(res => res.blob())
       .then(blob => {
         img.onload = function() {
-          canvas.width = img.width;
-          canvas.height = img.height;
-          ctx.drawImage(img, 0, 0);
-          
+          let scale = calculateScale(img.width, img.height);
+          canvas.width = window.innerWidth - 100;
+          canvas.height = window.innerHeight - 100;
+          let imageWidth = img.width * scale;
+          let imageHeight = img.height * scale;
+          let x = (canvas.width - imageWidth) / 2;
+          let y = (canvas.height - imageHeight) / 2;
+          ctx.drawImage(img, x, y, imageWidth, imageHeight);
+          // canvas.width = img.width;
+          // canvas.height = img.height;
+          // ctx.drawImage(img, 0, 0);
+          document.getElementById('width').value = img.width;
+          document.getElementById('height').value = img.height;
           document.getElementById('image-info').innerText = `Image Size: ${img.width} x ${img.height}`;
         }
         img.src = URL.createObjectURL(blob);
@@ -106,6 +184,34 @@ canvas.addEventListener('click', function(e) {
   colorCircleContainer.appendChild(colorCircle);
 });
 
+// Функция для масштабирования изображения
+function scaleImage(scalePercentage) {
+  const scaleFactor = scalePercentage / 100;
+  const newWidth = img.width * scaleFactor;
+  const newHeight = img.height * scaleFactor;
+  
+  canvas.width = newWidth;
+  canvas.height = newHeight;
+  
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.drawImage(img, 0, 0, newWidth, newHeight);
+}
+
+// Обработчик изменения значения в выпадающем списке масштаба
+scaleDropdown.addEventListener('change', function() {
+  const scalePercentage = parseInt(this.value);
+  scaleImage(scalePercentage);
+});
+
+
+// Обработчик события для кнопки сохранения
+document.getElementById('save-button').addEventListener('click', function() {
+  const link = document.createElement('a');
+  link.href = canvas.toDataURL("image/png");
+  link.download = 'scaled_image.png';
+  link.click();
+});
+
 // document.getElementById('color-picker').addEventListener('click', function () {
 //   colorPickerActive = !colorPickerActive;
 //   if (colorPickerActive) {
@@ -116,3 +222,67 @@ canvas.addEventListener('click', function(e) {
 //       alert('Color Picker Deactivated!');
 //   }
 // });
+
+document.getElementById('applyChanges').addEventListener('click', function() {
+  const method = document.getElementById('resizeMethod').value;
+  let newWidth, newHeight;
+
+  if (method === 'percentage') {
+      const percentage = parseInt(document.getElementById('resizePercentage').value);
+      if (percentage <= 0) {
+          alert('Введите корректное значение процента');
+          return;
+      }
+      newWidth = img.width * percentage / 100;
+      newHeight = img.height * percentage / 100;
+  } else {
+      const width = parseInt(document.getElementById('width').value);
+      const height = parseInt(document.getElementById('height').value);
+      if (width <= 0 || height <= 0) {
+          alert('Введите корректные значения ширины и высоты');
+          return;
+      }
+      newWidth = width;
+      newHeight = height;
+  }
+
+  // Проверяем, была ли выбрана опция "Сохранить пропорции"
+  const maintainAspectRatio = document.getElementById('maintainAspectRatio').checked;
+  if (maintainAspectRatio) {
+      // Рассчитываем новые размеры с сохранением пропорций
+      const aspectRatio = img.width / img.height;
+      if (method === 'percentage') {
+          if (newWidth > newHeight) {
+              newHeight = newWidth / aspectRatio;
+          } else {
+              newWidth = newHeight * aspectRatio;
+          }
+      } else {
+          const newAspectRatio = newWidth / newHeight;
+          if (newAspectRatio > aspectRatio) {
+              newWidth = newHeight * aspectRatio;
+          } else {
+              newHeight = newWidth / aspectRatio;
+          }
+      }
+  }
+
+  // Изменяем размер изображения
+  resizeImage(newWidth, newHeight);
+
+  // Закрываем модальное окно
+  toggleModalBackdrop();
+});
+
+//Функция для изменения размера изображения
+function resizeImage(newWidth, newHeight) {
+  canvas.width = newWidth;
+  canvas.height = newHeight;
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.drawImage(img, 0, 0, newWidth, newHeight);
+
+  // Выводим информацию об измененном размере
+  const originalPixels = img.width * img.height;
+  const newPixels = newWidth * newHeight;
+  alert(`Изменение размера:\n\nИсходное количество пикселей: ${originalPixels}\nНовое количество пикселей: ${newPixels}`);
+}

@@ -16,6 +16,12 @@
             <button class="trigger">
                 <img src="img/formkit_download.svg" alt="Загрузка" width="20" height="20">
             </button>
+            <button id="save-button">
+                <img src="img/save.svg" alt="Сохранить" width="20" height="20">
+            </button>
+            <button class="openResiseFileModal">
+                <img src="img/plus-minus.svg" alt="Масштабировать" width="20" height="20">
+            </button>
             <!-- <button id="color-picker">
                 <img src="img/pepicons-pencil_color-picker.svg" alt="Пипетка" width="20" height="20">
             </button> -->
@@ -31,11 +37,21 @@
         <div id="coordinates-info"></div>
         <div id="color-info"></div>
         <div id="color-circle-container"></div>
+        <select id="scale-dropdown">
+            <option value="12">12%</option>
+            <option value="25">25%</option>
+            <option value="50">50%</option>
+            <option value="75">75%</option>
+            <option value="100" selected>100%</option>
+            <option value="150">150%</option>
+            <option value="200">200%</option>
+            <option value="300">300%</option>
+        </select>
     </div>
-    <div class="modal">
+    <div class="modal modalDownload">
         <div class="modal-content">
             <div class="modal-header">
-                <span class="close-button">&times;</span>
+                <span class="close-button close-Download">&times;</span>
                 <h3>Загрузка изображения</h3>
             </div>
             <form class="needs-validation" novalidate>
@@ -52,6 +68,45 @@
                     <button id="reset-image">Сбросить</button>
                 </div>
             </form>
+        </div>
+    </div>
+    <div class="modal modalBackdrop">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="close-button close-Backdrop">&times;</span>
+                <h3>Масштабирование</h3>
+            </div>
+            <div class="modal-elem">
+                <p>Выберите способ изменения размера:</p>
+                <select id="resizeMethod">
+                    <option value="percentage">В процентах</option>
+                    <option value="pixels">В пикселях</option>
+                </select>
+            </div>
+            <div class="modal-elem" id="percentageMethod" style="display: none;">
+                <p id="resizePercentageTitle">Укажите процентное изменение размера:</p>
+                <input type="number" id="resizePercentage" min="1" value="100">
+            </div>
+            <div class="modal-elem" id="pixelsMethod" style="display: none;">
+                <p>Укажите новую ширину и высоту:</p>
+                <div class="resize-inputs">
+                    <div>Ширина: <input type="number" id="width" min="1"></div>
+                    <div>Высота: <input type="number" id="height" min="1"></div>
+                </div>
+                <div>
+                    <input type="checkbox" id="maintainAspectRatio" checked>Сохранить пропорции
+                </div>
+            </div>
+            <div class="modal-elem">
+                <p>Выберите алгоритм интерполяции:</p>
+                <select id="interpolationAlgorithm">
+                    <option value="nearestNeighbor">Ближайший сосед</option>
+                </select>
+                <span class="tooltip" id="tooltip">?</span>
+            </div>
+            <div class="tooltip-text" id="tooltipText">Алгоритм ближайшего соседа выбирает значение из ближайшего
+                пикселя к исходным координатам.</div>
+            <button class="apply" id="applyChanges">Применить</button>
         </div>
     </div>
     <script src="js/script.js"></script>
