@@ -1,5 +1,7 @@
 const canvas = document.getElementById('canvas');
+const canvasSave = document.getElementById('canvas-none');
 const ctx = canvas.getContext('2d');
+const ctxSave = canvasSave.getContext('2d');
 let img = new Image();
 const modalDownload = document.querySelector(".modalDownload");
 const modalBackdrop = document.querySelector(".modalBackdrop");
@@ -113,6 +115,8 @@ document.getElementById('load-image').addEventListener('click', function(e) {
             // ctx.drawImage(img, 0, 0);
             document.getElementById('width').value = img.width;
             document.getElementById('height').value = img.height;
+            document.getElementById('resizePercentageWidth').value = 100;
+            document.getElementById('resizePercentageHeight').value = 100;
             document.getElementById('image-info').innerText = `Image Size: ${img.width} x ${img.height}`;
           }
           img.src = URL.createObjectURL(blob);
@@ -138,6 +142,8 @@ document.getElementById('load-image').addEventListener('click', function(e) {
           // ctx.drawImage(img, 0, 0);
           document.getElementById('width').value = img.width;
           document.getElementById('height').value = img.height;
+          document.getElementById('resizePercentageWidth').value = 100;
+          document.getElementById('resizePercentageHeight').value = 100;
           document.getElementById('image-info').innerText = `Image Size: ${img.width} x ${img.height}`;
         }
         img.src = URL.createObjectURL(blob);
@@ -207,7 +213,7 @@ scaleDropdown.addEventListener('change', function() {
 // Обработчик события для кнопки сохранения
 document.getElementById('save-button').addEventListener('click', function() {
   const link = document.createElement('a');
-  link.href = canvas.toDataURL("image/png");
+  link.href = canvasSave.toDataURL("image/png");
   link.download = 'scaled_image.png';
   link.click();
 });
@@ -228,13 +234,14 @@ document.getElementById('applyChanges').addEventListener('click', function() {
   let newWidth, newHeight;
 
   if (method === 'percentage') {
-      const percentage = parseInt(document.getElementById('resizePercentage').value);
-      if (percentage <= 0) {
-          alert('Введите корректное значение процента');
+      const widthPercentage = parseInt(document.getElementById('resizePercentageWidth').value);
+      const heightPercentage = parseInt(document.getElementById('resizePercentageHeight').value);
+      if (widthPercentage <= 0 || heightPercentage <= 0) {
+          alert('Введите корректные значения процента');
           return;
       }
-      newWidth = img.width * percentage / 100;
-      newHeight = img.height * percentage / 100;
+      newWidth = img.width * widthPercentage / 100;
+      newHeight = img.height * heightPercentage / 100;
   } else {
       const width = parseInt(document.getElementById('width').value);
       const height = parseInt(document.getElementById('height').value);
@@ -251,19 +258,11 @@ document.getElementById('applyChanges').addEventListener('click', function() {
   if (maintainAspectRatio) {
       // Рассчитываем новые размеры с сохранением пропорций
       const aspectRatio = img.width / img.height;
-      if (method === 'percentage') {
-          if (newWidth > newHeight) {
-              newHeight = newWidth / aspectRatio;
-          } else {
-              newWidth = newHeight * aspectRatio;
-          }
+      const newAspectRatio = newWidth / newHeight;
+      if (newAspectRatio > aspectRatio) {
+          newWidth = newHeight * aspectRatio;
       } else {
-          const newAspectRatio = newWidth / newHeight;
-          if (newAspectRatio > aspectRatio) {
-              newWidth = newHeight * aspectRatio;
-          } else {
-              newHeight = newWidth / aspectRatio;
-          }
+          newHeight = newWidth / aspectRatio;
       }
   }
 
@@ -273,16 +272,25 @@ document.getElementById('applyChanges').addEventListener('click', function() {
   // Закрываем модальное окно
   toggleModalBackdrop();
 });
-
 //Функция для изменения размера изображения
 function resizeImage(newWidth, newHeight) {
   canvas.width = newWidth;
   canvas.height = newHeight;
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.drawImage(img, 0, 0, newWidth, newHeight);
+  canvasSave.width = newWidth;
+  canvasSave.height = newHeight;
+  ctxSave.clearRect(0, 0, canvasSave.width, canvasSave.height);
+  ctxSave.drawImage(img, 0, 0, newWidth, newHeight);
+  document.getElementById('width').value = newWidth;
+  document.getElementById('height').value = newHeight;
+  WidthS = Math.round(newWidth);
+  HeightS = Math.round(newHeight);
+  document.getElementById('image-info').innerText = `Image Size: ${WidthS} x ${HeightS}`;
 
   // Выводим информацию об измененном размере
   const originalPixels = img.width * img.height;
   const newPixels = newWidth * newHeight;
   alert(`Изменение размера:\n\nИсходное количество пикселей: ${originalPixels}\nНовое количество пикселей: ${newPixels}`);
+  img.src = canvas.toDataURL()
 }

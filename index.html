@@ -27,9 +27,12 @@
             </button> -->
     </aside>
     <div id="canvas-container">
-        <section id="canvas-scroll-container">
+        <div id="canvas-scroll-container">
+
             <canvas id="canvas" width="500" height="500"></canvas>
-        </section>
+            <canvas id="canvas-none" style="display: none;"></canvas>
+
+        </div>
     </div>
 
     <div id="info-panel">
@@ -85,7 +88,13 @@
             </div>
             <div class="modal-elem" id="percentageMethod" style="display: none;">
                 <p id="resizePercentageTitle">Укажите процентное изменение размера:</p>
-                <input type="number" id="resizePercentage" min="1" value="100">
+                <div class="resize-inputs">
+                    <div>Ширина: <input type="number" id="resizePercentageWidth" min="1"></div>
+                    <div>Высота: <input type="number" id="resizePercentageHeight" min="1"></div>
+                </div>
+                <div>
+                    <input type="checkbox" id="maintainAspectRatio" checked>Сохранить пропорции
+                </div>
             </div>
             <div class="modal-elem" id="pixelsMethod" style="display: none;">
                 <p>Укажите новую ширину и высоту:</p>
@@ -102,7 +111,7 @@
                 <select id="interpolationAlgorithm">
                     <option value="nearestNeighbor">Ближайший сосед</option>
                 </select>
-                <span class="tooltip" id="tooltip">?</span>
+                <tooltip class="tooltip" id="tooltip">?</tooltip>
             </div>
             <div class="tooltip-text" id="tooltipText">Алгоритм ближайшего соседа выбирает значение из ближайшего
                 пикселя к исходным координатам.</div>
