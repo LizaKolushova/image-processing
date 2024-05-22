@@ -13,7 +13,6 @@
           X1:
           <input
             type="number"
-            :disabled="prewiev"
             v-model="x1"
             class="modal__input"
             min="0"
@@ -26,7 +25,6 @@
           Y1:
           <input
             type="number"
-            :disabled="prewiev"
             v-model="y1"
             class="modal__input"
             min="1"
@@ -41,7 +39,6 @@
           X2:
           <input
             type="number"
-            :disabled="prewiev"
             v-model="x2"
             class="modal__input"
             min="0"
@@ -54,7 +51,6 @@
           Y2:
           <input
             type="number"
-            :disabled="prewiev"
             v-model="y2"
             class="modal__input"
             min="1"
@@ -203,25 +199,42 @@ export default {
         this.chartInstance.destroy();
       }
 
+      // Установка квадратного размера canvas
+      const canvasSize = 600; // Размер стороны квадрата
+      this.chartRef.width = canvasSize;
+      this.chartRef.height = canvasSize;
+
       this.chartInstance = new Chart(ctx, {
-        type: "line", //scatter
+        type: "scatter",
         data: {
           labels: Array.from({ length: 256 }, (_, i) => i),
           datasets: [
             {
               label: "Red",
-              data: redHistogram,
+              data: redHistogram.map((y, x) => ({ x, y })),
               backgroundColor: "rgba(255, 0, 0, 0.8)",
+              borderColor: "rgba(255, 0, 0, 0.8)",
+              showLine: false,
+              pointStyle: "circle",
+              pointRadius: 3,
             },
             {
               label: "Green",
-              data: greenHistogram,
+              data: greenHistogram.map((y, x) => ({ x, y })),
               backgroundColor: "rgba(0, 255, 0, 0.8)",
+              borderColor: "rgba(0, 255, 0, 0.8)",
+              showLine: false,
+              pointStyle: "circle",
+              pointRadius: 3,
             },
             {
               label: "Blue",
-              data: blueHistogram,
+              data: blueHistogram.map((y, x) => ({ x, y })),
               backgroundColor: "rgba(0, 0, 255, 0.8)",
+              borderColor: "rgba(0, 0, 255, 0.8)",
+              showLine: false,
+              pointStyle: "circle",
+              pointRadius: 3,
             },
             {
               label: "line",
@@ -234,14 +247,30 @@ export default {
               borderColor: "rgba(0,0,0,1)",
               borderWidth: 1,
               fill: false,
+              showLine: true,
             },
           ],
         },
         options: {
           animation: false,
+          aspectRatio: 1,
           scales: {
+            x: {
+              type: "linear",
+              position: "bottom",
+              min: 0,
+              max: 260,
+              ticks: {
+                stepSize: 15, // или другой шаг, чтобы деления были удобными
+              },
+            },
             y: {
               beginAtZero: true,
+              min: 0,
+              max: 260,
+              ticks: {
+                stepSize: 15, // или другой шаг, чтобы деления были удобными
+              },
             },
           },
         },
@@ -296,7 +325,7 @@ export default {
   top: 12px;
   right: 12px;
   background-color: white;
-  width: 25vw;
+  width: 27vw;
   padding: 1rem 1.5rem;
   border-radius: 0.5rem;
   display: flex;

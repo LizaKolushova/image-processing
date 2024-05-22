@@ -39,8 +39,8 @@
         Сохранить пропорции
       </label>
       <div class="modal__container">
-        <p>Размер До: {{ resNow }} MPs</p>
-        <p>Размер После: {{ resAfter }} MPs</p>
+        <p>Размер До: {{ resNow }} MP</p>
+        <p>Размер После: {{ resAfter }} MP</p>
       </div>
       <label>
         Выберите алгоритм интерполяции:
